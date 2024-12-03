@@ -1,10 +1,11 @@
 "use server";
 
+import { cookies } from "next/headers";
 import { Query, ID } from "node-appwrite";
 import { createAdminClient } from "../appwrite";
 import { appwriteConfig } from "../appwrite/config";
 import { parseStringify } from "../utils";
-import { cookies } from "next/headers";
+import { avatarPlaceholderUrl } from "@/constants";
 
 const handleError = (error: unknown, message: string) => {
   console.log(error, message);
@@ -57,7 +58,7 @@ export const createAccount = async ({
       {
         fullName,
         email,
-        avatar: "",
+        avatar: avatarPlaceholderUrl,
         accountId,
       },
     );
