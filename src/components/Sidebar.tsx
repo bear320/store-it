@@ -3,10 +3,16 @@
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { avatarPlaceholderUrl, navItems } from "@/constants";
+import { navItems } from "@/constants";
 import { cn } from "@/lib/utils";
 
-const Sidebar = () => {
+interface Props {
+  fullName: string;
+  avatar: string;
+  email: string;
+}
+
+const Sidebar = ({ fullName, avatar, email }: Props) => {
   const pathname = usePathname();
   return (
     <aside className="sidebar">
@@ -65,16 +71,16 @@ const Sidebar = () => {
 
       <div className="sidebar-user-info">
         <Image
-          src={avatarPlaceholderUrl}
+          src={avatar}
           alt="avatar"
           width={44}
           height={44}
           className="sidebar-user-avatar"
         />
-        {/* <div className="hidden lg:block">
+        <div className="hidden lg:block">
           <p className="subtitle-2 capitalize">{fullName}</p>
           <p className="caption">{email}</p>
-        </div> */}
+        </div>
       </div>
     </aside>
   );

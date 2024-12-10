@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers";
 import { Query, ID } from "node-appwrite";
-import { createAdminClient } from "../appwrite";
+import { createAdminClient, createSessionClient } from "../appwrite";
 import { appwriteConfig } from "../appwrite/config";
 import { parseStringify } from "../utils";
 import { avatarPlaceholderUrl } from "@/constants";
@@ -13,12 +13,12 @@ const handleError = (error: unknown, message: string) => {
 };
 
 const getUserByEmail = async (email: string) => {
-  const { database } = await createAdminClient();
+  const { databases } = await createAdminClient();
 
-  const result = await database.listDocuments(
+  const result = await databases.listDocuments(
     appwriteConfig.databaseId,
     appwriteConfig.usersCollectionId,
-    [Query.equal("email", email)],
+    [Query.equal("email", [email])],
   );
 
   return result.total > 0 ? result.documents[0] : null;
@@ -29,9 +29,10 @@ export const sendEmailOTP = async ({ email }: { email: string }) => {
 
   try {
     const session = await account.createEmailToken(ID.unique(), email);
+
     return session.userId;
   } catch (error) {
-    handleError(error, "Fail to send email OTP");
+    handleError(error, "Failed to send email OTP");
   }
 };
 
@@ -45,13 +46,12 @@ export const createAccount = async ({
   const existingUser = await getUserByEmail(email);
 
   const accountId = await sendEmailOTP({ email });
-
-  if (!accountId) throw new Error("Fail to send an OTP");
+  if (!accountId) throw new Error("Failed to send an OTP");
 
   if (!existingUser) {
-    const { database } = await createAdminClient();
+    const { databases } = await createAdminClient();
 
-    await database.createDocument(
+    await databases.createDocument(
       appwriteConfig.databaseId,
       appwriteConfig.usersCollectionId,
       ID.unique(),
@@ -88,6 +88,26 @@ export const verifySecret = async ({
 
     return parseStringify({ sessionId: session.$id });
   } catch (error) {
-    handleError(error, "Fail to verify OTP");
+    handleError(error, "Failed to verify OTP");
+  }
+};
+
+export const getCurrentUser = async () => {
+  try {
+    const { databases, account } = await createSessionClient();
+
+    const result = await account.get();
+
+    const user = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.usersCollectionId,
+      [Query.equal("accountId", result.$id)],
+    );
+
+    if (user.total <= 0) return null;
+
+    return parseStringify(user.documents[0]);
+  } catch (error) {
+    console.log(error);
   }
 };
