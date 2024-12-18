@@ -4,6 +4,7 @@ import { getCurrentUser } from "@/lib/actions/user.action";
 import Header from "@/components/Header";
 import MobileNavigation from "@/components/MobileNavigation";
 import Sidebar from "@/components/Sidebar";
+import { Toaster } from "@/components/ui/toaster";
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
   const currentUser = await getCurrentUser();
@@ -19,6 +20,8 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
 
         <div className="main-content">{children}</div>
       </section>
+
+      <Toaster />
     </main>
   );
 };
