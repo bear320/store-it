@@ -1,12 +1,12 @@
 "use server";
 
-import { UploadFileProps } from "../../../types";
-import { createAdminClient } from "../appwrite";
-import { InputFile } from "node-appwrite/file";
-import { appwriteConfig } from "../appwrite/config";
-import { ID } from "node-appwrite";
-import { constructFileUrl, getFileType, parseStringify } from "../utils";
 import { revalidatePath } from "next/cache";
+import { createAdminClient } from "../appwrite";
+import { appwriteConfig } from "../appwrite/config";
+import { constructFileUrl, getFileType, parseStringify } from "../utils";
+import { UploadFileProps } from "../../../types";
+import { InputFile } from "node-appwrite/file";
+import { ID } from "node-appwrite";
 
 const handleError = (error: unknown, message: string) => {
   console.log(error, message);

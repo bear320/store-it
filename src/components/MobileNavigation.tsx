@@ -101,7 +101,7 @@ const MobileNavigation = ({
 
           <Separator className="mb-4 bg-light-200/20" />
 
-          <FileUploader />
+          <FileUploader ownerId={ownerId} accountId={accountId} />
 
           <div className="flex flex-col justify-between gap-5 pb-5">
             FileUploader
